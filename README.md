@@ -2,7 +2,8 @@
 
 An offline-first, client-side HTML/JS web application designed to simplify mental health screenings (PHQ-9, GAD-7, and C-SSRS suicide risk workflows) in public school health rooms.
 
-👉 **[Live Demo](https://randallching.github.io/teen-health-screener/)**
+👉 **[Live Demo](https://randallching.github.io/teen-health-screener/)**  
+*(Note: This application was custom-designed for iPad/tablet viewports to fit the physical constraints of clinic rooms. For the best experience, please view this demo on a tablet, a mobile device, or via your browser's responsive design mode set to an iPad viewport.)*
 
 ### 🧠 The Problem & Context
 School health offices operate under heavy constraints. During busy periods, a single nurse may manage multiple students simultaneously, leaving a narrow window to conduct screening protocols. Legacy paper-based files created administrative backlogs, delaying critical referrals for students in distress.
