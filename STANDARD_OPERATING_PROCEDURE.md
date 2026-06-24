@@ -1,33 +1,30 @@
 # STANDARD_OPERATING_PROCEDURE.md
 
-## End-to-End Clinical Workflow
+## End-to-End Clinical Workflow (Middle School Screener)
 
 ### 1. Preparation & Setup
 1.  **Launch:** Open the iPad and navigate to the School Health Screener folder.
-2.  **Select Version:**
-    *   **Middle School Screener** (Grades 6-8).
-    *   **High School Screener** (Grades 9-12).
+2.  **Verify Version:** Ensure the application header indicates the **Middle School Screener (Grades 6-8)**.
 3.  **Session Initialization:**
-    *   Enter **Date**, **Student Last Name**, and **Student First Name**.
-    *   Click **Start Screening**.
-    *   **Gate:** Confirm the details in the pop-up prompt.
-4.  **Handover:** Pass the iPad to the student.
+    *   Enter **Date** and **Student Initials** (do *not* enter student first or last names, ensuring compliance with HIPAA data minimization standards).
+    *   Click **Start Screening** (this locks the input fields and displays the verification window).
+    *   **Gate:** Tap **I Confirm — Start Screening** in the confirmation box to initialize the session.
+4.  **Handover:** Pass the iPad directly to the student.
 
 ### 2. Student Administration
-1.  **Self-Administered Sections:** Student completes PHQ-9, GAD-7, and Additional Questions.
-    *   *(HS Only)* Student completes the Sexual/Reproductive Health module.
+1.  **Self-Administered Sections:** The student independently completes the GAD-2/GAD-7, PHQ-2/PHQ-9, and the two additional questions regarding difficulty and interest in mental health follow-up.
 2.  **Completion:** The student reaches the **STOP** screen ("Please return tablet to Nurse").
-3.  **Retrieval:** Take the device back immediately. Do not allow the student to view the staff section.
+3.  **Retrieval:** Take the device back immediately. Do not allow the student to view the staff review area.
 
 ### 3. Clinical Review & Risk Assessment
 1.  **Unlock Results:**
-    *   Click **Staff Review**.
-    *   **Gate:** Confirm you have control of the device to reveal scores.
-2.  **Analyze Scores:** Review calculated totals and severity for Depression (PHQ) and Anxiety (GAD).
+    *   Click **Staff Review** (under the STOP screen).
+    *   **Gate:** Confirm you have control of the device by clicking **I Confirm — Reveal Scores** to display clinical results.
+2.  **Analyze Scores:** Review calculated totals and severity metrics for depression (PHQ) and anxiety (GAD).
 3.  **Safety Alerts:**
-    *   **Red Safety Alert:** If PHQ-9 Question 9 is positive (>0), a flashing red alert appears.
-    *   **C-SSRS Protocol:** Click the **yellow C-SSRS button** to unlock the suicide risk assessment.
-    *   *Procedure:* Read C-SSRS questions verbally to the student and record answers. Logic will guide you through Sub-questions 3-5 (if Q2 is Yes) and Q7 (if Q6 is Yes).
+    *   **Red Safety Alert:** If PHQ-9 Question 9 (suicidal ideation) is positive (>0), a pulsing red warning box will display in the review dashboard.
+    *   **C-SSRS Protocol:** Click the **yellow C-SSRS button** to unlock the Columbia-Suicide Severity Rating Scale.
+    *   *Procedure:* Read C-SSRS questions verbally to the student and record responses in the interface. Branching logic will dynamically reveal Sub-questions 3-5 (if Q2 is Yes) and Q7 (if Q6 is Yes).
 
 ### 4. The Data Transmission Protocol (Strict Compliance)
 Once the assessment is complete and scores are reviewed, you must follow this 3-step workflow to securely transmit the results. Because the application runs entirely in local browser memory, **no files are ever saved to the iPad disk**, eliminating the risk of data spills.
