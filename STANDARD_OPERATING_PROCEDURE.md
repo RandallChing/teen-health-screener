@@ -44,3 +44,13 @@ Once the assessment is complete and scores are reviewed, you must follow this 3-
 1. Close the iOS Mail client and return to the Safari browser tab.
 2. Click **'Clear & Start New Student'** at the bottom of the interface.
 3. Confirm the action in the system prompt. This completely flushes all student answers from the browser's volatile memory, securing the device for the next screening session.
+
+### 5. Offline Queueing & Encryption Protocol
+To maintain data integrity and security in classrooms or health rooms with intermittent internet connectivity:
+*   **Outbox Queuing:** If the iPad is offline when the nurse taps **Send**, iOS Mail will natively hold the outgoing report in the **Outbox** folder. The system will automatically transmit the queued email as soon as a network connection is reestablished.
+*   **End-of-Shift Draft Audit:** Before locking the device at the end of each day, nurses must open the native iOS Mail application and verify that the **Outbox** and **Drafts** folders are empty. Any unsent reports must be manually sent or verified.
+*   **Enterprise Encryption Trigger:** The application automatically prefixes the subject line with `E Secure` (e.g., `E Secure Screener Results - [Initials]`). This keyword is critical as it triggers the clinical network's mail gateway to apply automatic end-to-end encryption to the outbound email, protecting the student's clinical data during transmission.
+
+### 6. Physical Device Security & Patient Safety
+*   **Handoff Supervision:** The nurse must unlock the device and initialize the session before passing the tablet to the student. During self-administration, the nurse should maintain line-of-sight to ensure the student does not attempt to close the application or browse other settings.
+*   **Immediate RAM Purge Gating:** The "RAM Purge" (Step 3 of the transmission protocol) must be executed immediately upon retrieving the device. Under no circumstances should the device be left unattended or handed to another student before the session is cleared, as this prevents subsequent users from using the browser's back button to view previous responses.
