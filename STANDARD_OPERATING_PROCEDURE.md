@@ -39,8 +39,9 @@ Once the assessment is complete and scores are reviewed, you must follow this 3-
 
 #### Step 3: RAM Purge (Volatile Memory Sanitization)
 1. Close the iOS Mail client and return to the Safari browser tab.
-2. Click **'Clear & Start New Student'** at the bottom of the interface.
-3. Confirm the action in the system prompt. This completely flushes all student answers from the browser's volatile memory, securing the device for the next screening session.
+2. Click **'Clear & Start New Student'** at the bottom of the interface and confirm the prompt to flush all volatile variables.
+3. **Hard Reload Sanitization (Fail-safe):** Alternatively, performing an intentional **browser reload/refresh** will instantly wipe all active memory and reset the application to the startup screen.
+   * *Note on Prevention:* To prevent students from accidentally wiping their screening mid-session, the application includes a `beforeunload` browser event listener. If a reload is attempted while a session is active, the browser will block the action and display a confirmation prompt before clearing the memory.
 
 ### 5. Offline Queueing & Encryption Protocol
 To maintain data integrity and security in classrooms or health rooms with intermittent internet connectivity:
