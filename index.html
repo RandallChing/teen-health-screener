@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teen Health Screener - MS</title>
+    <style>
+        /* --- GLOBAL VARIABLES & RESET --- */
+        :root {
+            /* Clinical Brand Colors */
+            --brand-primary: #0366d6;
+            /* GitHub-like Blue */
+            --brand-accent: #2188ff;
+            /* Bright accent */
+
+            /* Functional Colors */
+            --bg-app: #f6f8fa;
+            /* Very light gray-blue background */
+            --bg-card: #ffffff;
+            --border-color: #d1d5da;
+            --border-subtle: #e1e4e8;
+
+            /* Text Colors */
+            --text-primary: #24292e;
+            /* Nearly black */
+            --text-secondary: #586069;
+            /* Slate gray */
+            --text-danger: #cb2431;
+
+            /* Severity Colors */
+            --success-text: #1a7f37;
+            --warning-text: #735c0f;
+            --danger-color: #d73a49;
+            /* GitHub Red */
+
+            /* Spacing & Radius */
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            /* Disable text selection for security and cleaner UX */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Allow selection in text inputs only */
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 40px;
+            position: relative;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 20px;
+            background: var(--brand-accent);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        p.instructions {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* --- ALERTS & DISCLAIMERS --- */
+        .disclaimer-box {
+            background-color: #f1f8ff;
+            border: 1px solid #c8e1ff;
+            color: #0366d6;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 32px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* REDESIGNED: Prominent Red Pulse Animation */
+        @keyframes prominentPulse {
+            0% {
+                box-shadow: 0 2px 8px rgba(215, 58, 73, 0.1);
+                border-left-color: var(--danger-color);
+            }
+
+            50% {
+                box-shadow: 0 4px 24px rgba(215, 58, 73, 0.4);
+                border-left-color: #ff5b6d;
+                background-color: #fff0f0;
+            }
+
+            100% {
+                box-shadow: 0 2px 8px rgba(215, 58, 73, 0.1);
+                border-left-color: var(--danger-color);
+            }
+        }
+
+        /* REDESIGNED: Risk Alert Boxes */
+        .cssrs-alert-box {
+            background-color: #fff;
+            /* Clean white background */
+            border: 1px solid var(--border-subtle);
+            border-left: 6px solid var(--danger-color);
+            /* Strong status indicator on left */
+            color: var(--text-primary);
+            /* Main text is dark, not red */
+            padding: 24px;
+            margin-top: 24px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 16px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: prominentPulse 2.5s infinite ease-in-out;
+        }
+
+        /* Bold the risk keywords within the text if they exist */
+        .cssrs-alert-box strong {
+            color: var(--danger-color);
+            font-weight: 800;
+        }
+
+        /* DYNAMIC SCORE COLORS */
+
+
+        /* --- FORMS & INPUTS --- */
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .input-group input,
+        .text-input-sub {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
+            background-color: #fafbfc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus,
+        .text-input-sub:focus {
+            border-color: var(--brand-accent);
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.3);
+        }
+
+        /* --- QUESTION BLOCKS --- */
+        .question-block {
+            margin-bottom: 22px;
+            padding-bottom: 17px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 11px;
+            color: var(--text-primary);
+        }
+
+        /* --- SELECTION GRID --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: 16px 8px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            font-size: 14px;
+            min-height: 50px;
+            user-select: none;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .option-label:hover {
+            border-color: var(--brand-accent);
+            color: var(--brand-primary);
+            background-color: #f0f6fc;
+        }
+
+        .option-label.selected {
+            background-color: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(27, 31, 35, 0.15);
+            cursor: pointer;
+            margin-top: 16px;
+            transition: 0.2s;
+            box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1);
+        }
+
+        .btn:hover {
+            text-decoration: none;
+            filter: brightness(0.95);
+        }
+
+        .btn:active {
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #2ea44f 0%, #22863a 100%);
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 16px 24px;
+            box-shadow: 0 4px 12px rgba(46, 164, 79, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-start:hover {
+            background: linear-gradient(135deg, #22863a 0%, #1a6b2e 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(46, 164, 79, 0.4), 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(46, 164, 79, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-calc {
+            background: linear-gradient(135deg, #e8eaed 0%, #d1d5da 100%);
+            color: #57606a;
+            border: 1px solid #d1d5da;
+            font-size: 14px;
+            padding: 12px 20px;
+            margin-top: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-calc:hover {
+            background: linear-gradient(135deg, #d1d5da 0%, #b1b5ba 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-calc:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #ffffff 0%, #f6f8fa 100%);
+            color: #24292e;
+            border: 2px solid #d1d5da;
+            font-size: 16px;
+            padding: 14px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        .btn-reset:hover {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e1e4e8 100%);
+            border-color: #b1b5ba;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-reset:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-cancel {
+            background-color: #f6f8fa;
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* --- INLINE CONFIRMATION ALERTS (COMPACT) --- */
+        .inline-alert-box {
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .inline-alert-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .inline-alert-text {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .inline-actions .btn {
+            margin: 0 !important;
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+
+        /* --- START CONFIRMATION (Option E: Minimalist Inline) --- */
+        .confirmation-expanded {
+            background: #f0f6fc;
+            border: 2px solid #0969da;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            animation: expandDown 0.3s ease-out;
+        }
+
+        @keyframes expandDown {
+            from {
+                max-height: 0;
+                opacity: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            to {
+                max-height: 200px;
+                opacity: 1;
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+        }
+
+        .confirmation-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0969da;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .confirmation-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .confirmation-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .confirmation-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #57606a;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .confirmation-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0969da;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .confirmation-actions .btn {
+            height: 36px !important;
+            padding: 0 16px !important;
+            margin: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* C-SSRS Confirmation Begin Assessment Button */
+        #cssrs-inline-warning .btn-calc {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+            color: #78716c !important;
+            border: 1px solid #fbbf24 !important;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        #cssrs-inline-warning .btn-calc:hover {
+            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%) !important;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25), 0 2px 3px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        /* --- C-SSRS PROTOCOL BOX --- */
+        .cssrs-protocol-box {
+            background: #e1f5fe;
+            border: 1px solid #b3e5fc;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .protocol-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #01579b;
+            margin-bottom: 8px;
+        }
+
+        .protocol-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .protocol-item {
+            font-size: 13px;
+            color: #01579b;
+            font-weight: 500;
+        }
+
+        /* --- PROMPT REVIEW BOX (Blue Protocol Style) --- */
+        .prompt-review-box {
+            background: #e1f5fe;
+            border: 1px solid #b3e5fc;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 16px 0;
+        }
+
+        .prompt-review-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .pulse-icon {
+            font-size: 18px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .prompt-review-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #01579b;
+        }
+
+        .prompt-review-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .prompt-review-items div {
+            font-size: 14px;
+            color: #01579b;
+            font-weight: 500;
+        }
+
+        /* --- C-SSRS CONFIRMATION DIALOG --- */
+        .cssrs-confirmation-box {
+            background: #fff;
+            border: 2px solid var(--brand-accent);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .confirmation-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .confirmation-content {
+            margin-bottom: 16px;
+        }
+
+        .confirmation-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .confirmation-criteria {
+            margin: 0 0 12px 20px;
+            padding: 0;
+        }
+
+        .confirmation-criteria li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .confirmation-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* --- C-SSRS RISK ALERTS --- */
+        .cssrs-alert-low,
+        .cssrs-alert-moderate,
+        .cssrs-alert-high {
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 12px;
+        }
+
+        .cssrs-alert-low {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+        }
+
+        .cssrs-alert-moderate {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+        }
+
+        .cssrs-alert-high {
+            background: #ffebee;
+            border: 1px solid #ef5350;
+        }
+
+        .cssrs-alert-header {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .cssrs-alert-low .cssrs-alert-header {
+            color: #1565c0;
+        }
+
+        .cssrs-alert-moderate .cssrs-alert-header {
+            color: #e65100;
+        }
+
+        .cssrs-alert-high .cssrs-alert-header {
+            color: #c62828;
+        }
+
+        .cssrs-alert-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .cssrs-alert-actions {
+            margin: 0 0 0 20px;
+            padding: 0;
+        }
+
+        .cssrs-alert-actions li {
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        /* --- REDESIGNED RESULTS DASHBOARD --- */
+        /* LOCKDOWN: Prevent Text Selection to force Email Workflow */
+        .result-grid,
+        .inline-alert-box,
+        .nurse-only,
+        #result-section {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            /* Larger gap for dashboard feel */
+            margin-bottom: 16px;
+        }
+
+        /* Tech Startup Metric Card Style */
+        .result-box {
+            background-color: #fff;
+            border: 1px solid var(--border-subtle);
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Massive Score Number */
+        .score-large {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--text-primary);
+            /* Default to black */
+            line-height: 1;
+            margin: 8px 0 4px 0;
+            letter-spacing: -2px;
+        }
+
+        .score-sub {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .severity-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+            /* Clean separator */
+            display: block;
+        }
+
+        /* DYNAMIC SCORE COLORS (Placed here to override defaults) */
+        .score-green {
+            color: var(--success-text);
+            font-weight: 700;
+        }
+
+        .score-yellow {
+            color: var(--warning-text);
+            font-weight: 700;
+        }
+
+        .score-red {
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+
+        .score-orange {
+            color: #d66e06;
+            font-weight: 700;
+        }
+
+        /* --- HEATMAP GRID --- */
+        .heatmap-grid {
+            display: grid;
+            gap: 4px;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .heatmap-cell {
+            height: 44px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .heatmap-cell.unanswered {
+            border: 2px solid #1565c0;
+        }
+
+        .heatmap-cell.safety-alert {
+            background: #ffebee;
+            border: 2px solid #ef5350;
+        }
+
+        .cell-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .cell-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 4px;
+        }
+
+        /* --- QUESTION REFERENCE DROPDOWN --- */
+        .consolidated-reference {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .toggle-reference {
+            background: none;
+            border: none;
+            color: var(--brand-accent);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toggle-reference:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 14px;
+        }
+
+        .reference-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 16px 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .reference-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .reference-content {
+            background: #f8f9fa;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .reference-item {
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            display: flex;
+            gap: 8px;
+        }
+
+        .reference-item .q-num {
+            font-weight: 600;
+            min-width: 28px;
+            flex-shrink: 0;
+        }
+
+        .reference-item .q-text {
+            flex: 1;
+        }
+
+        .reference-item .q-score {
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* --- RESULTS LEGEND --- */
+        .results-legend {
+            background: #f8f9fa;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .legend-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .legend-section strong {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-right: 4px;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        .color-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* --- REFERENCE TABLE --- */
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .reference-table th {
+            background: #e8eaed;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .reference-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .reference-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .reference-table .col-num {
+            width: 40px;
+            font-weight: 600;
+        }
+
+        .reference-table .col-question {
+            width: auto;
+        }
+
+        .reference-table .col-score {
+            width: 180px;
+            text-align: right;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+
+
+        /* --- HANDOFF OVERLAYS --- */
+        .handoff-overlay {
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            right: -40px;
+            min-height: calc(100% + 80px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 56px;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-bottom: 48px;
+            text-align: center;
+            box-sizing: border-box;
+            border-radius: var(--radius-md);
+        }
+
+        .handoff-student {
+            background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+        }
+
+        .handoff-nurse {
+            background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%);
+            border-top: 4px solid #94a3b8;
+        }
+
+        .handoff-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: handoffPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes handoffPop {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .handoff-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .handoff-student .handoff-title {
+            color: #15803d;
+        }
+
+        .handoff-nurse .handoff-title {
+            color: #1e293b;
+        }
+
+        .handoff-subtitle {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 32px;
+            max-width: 400px;
+        }
+
+        .handoff-student .handoff-subtitle {
+            color: #166534;
+        }
+
+        .handoff-nurse .handoff-subtitle {
+            color: #64748b;
+        }
+
+        .handoff-instruction-box {
+            background: white;
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 20px 32px;
+            margin-bottom: 32px;
+            max-width: 420px;
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
+        }
+
+        .handoff-instruction-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #15803d;
+            line-height: 1.4;
+        }
+
+        .handoff-role-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 100px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .handoff-warning-box {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            max-width: 480px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .handoff-warning-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .handoff-warning-list {
+            font-size: 13px;
+            color: #78350f;
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .handoff-warning-list li {
+            margin-bottom: 2px;
+        }
+
+        .handoff-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.2px;
+            margin-top: 8px;
+        }
+
+        .handoff-btn-student {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
+        }
+
+        .handoff-btn-student:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.45);
+        }
+
+        .handoff-btn-nurse {
+            background: linear-gradient(135deg, #0366d6 0%, #0550ae 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(3, 102, 214, 0.3);
+        }
+
+        .handoff-btn-nurse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(3, 102, 214, 0.4);
+        }
+
+        .handoff-btn:active {
+            transform: translateY(0);
+        }
+
+        /* --- EMAIL EXPORT BUTTON --- */
+        .btn-email {
+            background: linear-gradient(135deg, #0366d6 0%, #0550ae 100%);
+            color: white;
+            border: none;
+            font-size: 16px;
+            padding: 15px 24px;
+            box-shadow: 0 4px 12px rgba(3, 102, 214, 0.28);
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-email:hover {
+            background: linear-gradient(135deg, #0550ae 0%, #033d82 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(3, 102, 214, 0.38);
+        }
+
+        /* --- C-SSRS URGENT STATE (Q9 positive) --- */
+        @keyframes cssrsUrgentPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(214, 58, 73, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(214, 58, 73, 0);
+            }
+        }
+
+        .cssrs-urgent {
+            border: 2px solid #d73a49 !important;
+            animation: cssrsUrgentPulse 1.8s ease-in-out infinite;
+        }
+
+        /* --- RESULTS SESSION INFO --- */
+        .results-session-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-align: center;
+            letter-spacing: 0.4px;
+            margin-top: -8px;
+            margin-bottom: 20px;
+        }
+
+        .handoff-overlay.fading {
+            opacity: 0;
+            transition: opacity 0.35s ease-out;
+            pointer-events: none;
+        }
+
+        /* --- DONE BUTTON (bottom of quiz) --- */
+        .done-separator {
+            border: none;
+            border-top: 2px dashed #c8d6e5;
+            margin: 40px 0 28px 0;
+        }
+
+        .btn-done {
+            background: linear-gradient(135deg, #0366d6 0%, #0550ae 100%);
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 18px 24px;
+            box-shadow: 0 4px 12px rgba(3, 102, 214, 0.28);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            margin-top: 0;
+        }
+
+        .btn-done:hover {
+            background: linear-gradient(135deg, #0550ae 0%, #033d82 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(3, 102, 214, 0.38);
+        }
+
+        /* C-SSRS SPECIFIC */
+        .cssrs-container {
+            border: 2px solid #ffd33d;
+            background-color: #fffdf5;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+
+        .cssrs-header {
+            background: #ffd33d;
+            color: #24292e;
+            padding: 12px;
+            font-weight: 700;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-toggle-cssrs {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #78716c;
+            border: 1px solid #fbbf24;
+            font-size: 16px;
+            padding: 16px 24px;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-toggle-cssrs:hover {
+            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25), 0 2px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-toggle-cssrs:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(251, 191, 36, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* TIME SENSITIVE BOX SPECIFIC */
+        .ts-container {
+            border: 2px solid var(--brand-primary);
+            background-color: #f0f6fc;
+            /* Very light blue */
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .ts-header {
+            background: var(--brand-primary);
+            color: white;
+            padding: 10px;
+            font-weight: 700;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .ts-row {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #d1d5da;
+        }
+
+        .ts-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .ts-label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .ts-val {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-text {
+            color: var(--text-danger);
+            background: #ffeef0;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            border: 1px solid var(--danger-border);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .handoff-overlay {
+                top: -20px;
+                left: -20px;
+                right: -20px;
+                min-height: calc(100% + 40px);
+                padding-top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="start-section">
+            <div class="nurse-banner"
+                style="background:#ffebee; color:#c62828; padding:12px; text-align:center; font-weight:bold; margin-bottom:20px; border-radius:4px; border:1px solid #ef9a9a;">
+                NURSE USE ONLY - DO NOT DISTRIBUTE</div>
+            <h1>Teen Health Screener (MS)</h1>
+            <p class="instructions">Please enter the session information to begin.</p>
+            <div id="start-error" class="error-text hidden"></div>
+            <div class="input-group"><label>Date</label><input type="date" id="manualDate"></div>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+            <div class="input-group"><label>Student Initials</label><input type="text" id="studentInitials"
+                    placeholder="Enter Student Initials (e.g. JD)" autocomplete="off"></div>
+            <p style="font-size:16px; color:#666; margin-top:20px; font-style:italic;">This screener may be administered
+                and interpreted by RNs and APRNs. A Health Technician may administer the screener under the delegation
+                of an RN or APRN, but may not interpret results.</p>
+
+            <button id="btn-start-init" class="btn btn-start" onclick="requestStart()">Start Screening</button>
+
+            <div id="start-inline-warning" class="confirmation-expanded hidden">
+                <div class="confirmation-title">✓ Confirm Details</div>
+                <div class="confirmation-data">
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Date</div>
+                        <div class="confirmation-value" id="confirm-date-display"></div>
+                    </div>
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Student Initials</div>
+                        <div class="confirmation-value" id="confirm-name-display"></div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn btn-cancel" onclick="cancelStart()">Cancel</button>
+                    <button class="btn btn-start" onclick="confirmStart()">Begin Screening</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz-section" class="hidden">
+            <h1>Mental Health Questionnaire</h1>
+            <h2 style="text-align:center; color:#555; margin-bottom:10px;">This screener is optional</h2>
+            <div class="disclaimer-box">
+                <p style="margin-top:0;">This assessment is a confidential way to assess your mental health. The
+                    information you provide in this form will be kept confidential, and only Hawaii Keiki staff will
+                    have access to the information. Everything you share about your mental health is confidential
+                    unless
+                    you are not safe or others are not safe. If anyone is being harmed or is at risk of being harmed
+                    we
+                    have to share this information and get help.</p>
+                <p style="margin-bottom:0;">Please answer the questions to the best of your ability and as
+                    completely as
+                    possible. The information from this form will help your Hawaii Keiki nurse in your care. If you
+                    feel
+                    uncomfortable with any questions, <strong>you have the option to skip it.</strong></p>
+            </div>
+
+            <h2>Part 1: PHQ and GAD 2</h2>
+            <p class="instructions">Over the last 2 weeks, how often have you been bothered by any of the following
+                problems?</p>
+            <div id="phq4-container"></div>
+
+            <h2>Part 2: GAD-7</h2>
+            <p class="instructions">Over the last 2 weeks, how often have you been bothered by any of the following
+                problems?</p>
+            <div id="gad-remaining-container"></div>
+
+            <h2>Part 3: PHQ-9</h2>
+            <p class="instructions">Over the last 2 weeks, how often have you been bothered by any of the following
+                problems?</p>
+            <div id="phq-remaining-container"></div>
+
+            <h2>Part 4: Additional Questions</h2>
+            <div class="question-block">
+                <div class="question-text">1. If you checked off any problems above, how difficult have these
+                    problems
+                    made it for you to do your work, take care of things at home, or get along with other people?
+                </div>
+                <div class="options-grid"><label class="option-label" id="label_impact_0"><input type="radio"
+                            name="impact" value="Not difficult at all" id="impact_0"
+                            onclick="handleRadioClick(this)"><span class="option-text">Not difficult at
+                            all</span></label><label class="option-label" id="label_impact_1"><input type="radio"
+                            name="impact" value="Somewhat difficult" id="impact_1"
+                            onclick="handleRadioClick(this)"><span class="option-text">Somewhat
+                            difficult</span></label><label class="option-label" id="label_impact_2"><input type="radio"
+                            name="impact" value="Very difficult" id="impact_2" onclick="handleRadioClick(this)"><span
+                            class="option-text">Very
+                            difficult</span></label><label class="option-label" id="label_impact_3"><input type="radio"
+                            name="impact" value="Extremely difficult" id="impact_3"
+                            onclick="handleRadioClick(this)"><span class="option-text">Extremely
+                            difficult</span></label></div>
+            </div>
+            <div class="question-block">
+                <div class="question-text">2. Are you interested in speaking with a mental health provider?</div>
+                <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                        id="label_interest_yes"><input type="radio" name="interest" value="Yes" id="interest_yes"
+                            onclick="handleRadioClick(this)"><span class="option-text">Yes</span></label><label
+                        class="option-label" id="label_interest_no"><input type="radio" name="interest" value="No"
+                            id="interest_no" onclick="handleRadioClick(this)"><span
+                            class="option-text">No</span></label></div>
+            </div>
+
+            <!-- DONE BUTTON: Student taps when finished (gated) -->
+            <hr class="done-separator">
+            <button id="btn-student-done" class="btn btn-done" onclick="requestDone()">I'm Done — Submit Questionnaire
+                →</button>
+
+            <div id="done-inline-warning" class="confirmation-expanded hidden">
+                <div class="confirmation-title">Are you sure you're finished?</div>
+                <div class="confirmation-data">
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Action</div>
+                        <div class="confirmation-value">Submit Questionnaire</div>
+                    </div>
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Note</div>
+                        <div class="confirmation-value">You cannot change your answers after submitting.</div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn btn-cancel" onclick="cancelDone()">Go Back</button>
+                    <button class="btn btn-done" onclick="confirmDone()">Yes, I'm Done</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- HANDOFF OVERLAY: Student-Facing (Green) -->
+        <div id="handoff-student-overlay" class="handoff-overlay handoff-student hidden">
+            <div class="handoff-icon">✓</div>
+            <div class="handoff-title">You're All Done!</div>
+            <div class="handoff-subtitle">Thank you for completing the health questionnaire.</div>
+            <div class="handoff-instruction-box">
+                <div class="handoff-instruction-text">📋 Please hand the tablet to your nurse now.</div>
+            </div>
+            <button class="handoff-btn handoff-btn-student" onclick="nurseTakeover()">
+                ✓ I've handed it to the nurse
+            </button>
+        </div>
+
+        <!-- HANDOFF OVERLAY: Nurse-Facing (Clinical Gray) -->
+        <div id="handoff-nurse-overlay" class="handoff-overlay handoff-nurse hidden">
+            <div class="handoff-role-badge">🩺 Nurse / Staff Use Only</div>
+            <div class="handoff-icon">🔒</div>
+            <div class="handoff-title">Staff Access</div>
+            <div class="handoff-subtitle">Student questionnaire has been submitted.</div>
+            <div id="handoff-warning-box" class="handoff-warning-box hidden">
+                <div class="handoff-warning-title">⚠ Unanswered Questions Detected</div>
+                <ul id="handoff-warning-list" class="handoff-warning-list"></ul>
+            </div>
+            <button class="handoff-btn handoff-btn-nurse" onclick="nurseConfirmReveal()">
+                View Screening Results →
+            </button>
+        </div>
+
+
+        <div id="result-section" class="hidden">
+            <h1 id="results-top" tabindex="-1">Screening Results</h1>
+            <div id="results-session-info" class="results-session-info"></div>
+
+            <!-- LEGEND -->
+            <div class="results-legend">
+                <div class="legend-section">
+                    <strong>Individual Question Scores:</strong>
+                    <span class="legend-item">0 = Not at all</span>
+                    <span class="legend-item">1 = Several days</span>
+                    <span class="legend-item">2 = More than half the days</span>
+                    <span class="legend-item">3 = Nearly every day</span>
+                </div>
+                <div class="legend-section">
+                    <strong>Score Severity Color Scale:</strong>
+                    <span class="legend-item"><span class="color-dot" style="background:#1a7f37;"></span> Green =
+                        Minimal (0-4)</span>
+                    <span class="legend-item"><span class="color-dot" style="background:#d66e06;"></span> Orange =
+                        Moderate (5-14)</span>
+                    <span class="legend-item"><span class="color-dot" style="background:#d73a49;"></span> Red = Severe
+                        (15+)</span>
+                </div>
+            </div>
+
+            <div class="result-grid">
+                <div class="result-box">
+                    <div class="result-label">PHQ-9 (Depression)</div>
+                    <div class="score-large" id="displayScorePHQ">--</div>
+                    <div class="score-sub">PHQ-2 Score: <span id="displayScorePHQ2">--</span></div>
+                    <div class="severity-text" id="displaySeverityPHQ">--</div>
+                    <div class="heatmap-grid" id="heatmap-phq" style="grid-template-columns: repeat(9, 1fr);">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="result-box">
+                    <div class="result-label">GAD-7 (Anxiety)</div>
+                    <div class="score-large" id="displayScoreGAD">--</div>
+                    <div class="score-sub">GAD-2 Score: <span id="displayScoreGAD2">--</span></div>
+                    <div class="severity-text" id="displaySeverityGAD">--</div>
+                    <div class="heatmap-grid" id="heatmap-gad" style="grid-template-columns: repeat(7, 1fr);">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- REQUIRES PROMPT REVIEW (Dynamic) -->
+            <div id="prompt-review-section" class="prompt-review-box hidden">
+                <div class="prompt-review-header">
+                    <span class="pulse-icon">⚠️</span>
+                    <span class="prompt-review-title">PROMPT REVIEW REQUIRED</span>
+                </div>
+                <div id="prompt-review-body" class="prompt-review-items"></div>
+            </div>
+
+            <!-- CONSOLIDATED QUESTION REFERENCE -->
+            <div class="consolidated-reference">
+                <button class="toggle-reference" onclick="toggleConsolidatedReference()">
+                    Show PHQ-9/GAD-7 Question Details <span class="arrow">▼</span>
+                </button>
+                <div id="reference-consolidated" class="reference-content hidden">
+                    <h3 class="reference-section-title">PHQ-9 (Depression)</h3>
+                    <div id="reference-phq"></div>
+                    <h3 class="reference-section-title">GAD-7 (Anxiety)</h3>
+                    <div id="reference-gad"></div>
+                </div>
+            </div>
+
+            <!-- ADDITIONAL QUESTIONS REFERENCE -->
+            <div class="consolidated-reference" style="margin-top: 12px;">
+                <button class="toggle-reference" onclick="toggleAdditionalReference()">
+                    Show Additional Questions Details <span class="arrow">▼</span>
+                </button>
+                <div id="reference-additional" class="reference-content hidden">
+                    <div id="reference-impact-interest"></div>
+                </div>
+            </div>
+
+
+
+
+
+            <button id="btn-admin-cssrs" class="btn btn-toggle-cssrs" onclick="requestCSSRS()">Click to Administer
+                C-SSRS Suicide Risk Assessment</button>
+
+            <div id="cssrs-inline-warning" class="confirmation-expanded hidden">
+                <div class="confirmation-title">✓ Confirm C-SSRS Assessment</div>
+                <div class="confirmation-data">
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Criteria</div>
+                        <div class="confirmation-value">PHQ-9 Q9+ or Clinical Judgment</div>
+                    </div>
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Action</div>
+                        <div class="confirmation-value">Begin Assessment</div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn btn-cancel" onclick="cancelCSSRS()">Cancel</button>
+                    <button class="btn btn-calc" onclick="confirmOpenCSSRS()">Begin Assessment</button>
+                </div>
+            </div>
+
+            <div id="cssrs-module" class="cssrs-container hidden">
+                <div class="cssrs-header">C-SSRS RISK ASSESSMENT</div>
+
+                <!-- PROTOCOL REMINDER -->
+                <div class="cssrs-protocol-box">
+                    <div class="protocol-title">📋 PROTOCOL REMINDER</div>
+                    <div class="protocol-items">
+                        <div class="protocol-item">✓ Only RNs or APRNs may administer</div>
+                        <div class="protocol-item">✓ Administer questions verbally to the student</div>
+                        <div class="protocol-item">✓ Follow highest risk level assessed</div>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-text">1. In the past month, have you wished you were dead or wished you
+                        could
+                        go to sleep and not wake up?</div>
+                    <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                            id="label_cs1_yes"><input type="radio" name="cs_q1" value="Yes" id="cs1_yes"
+                                onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                            class="option-label" id="label_cs1_no"><input type="radio" name="cs_q1" value="No"
+                                id="cs1_no" onclick="handleCSSRSRadio(this)"><span class="option-text">No</span></label>
+                    </div>
+                    <div id="alert_cs1" class="cssrs-alert-low hidden">
+                        <div class="cssrs-alert-header">⚠️ LOW RISK</div>
+                        <div class="cssrs-alert-label">Action Required:</div>
+                        <ul class="cssrs-alert-actions">
+                            <li>Contact counselor or SBBH for follow-up</li>
+                            <li>Offer MH services via HK PMHNP</li>
+                            <li>Follow up in 2 weeks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-text">2. In the past month, have you actually had any thoughts of killing
+                        yourself?</div>
+                    <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                            id="label_cs2_yes"><input type="radio" name="cs_q2" value="Yes" id="cs2_yes"
+                                onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                            class="option-label" id="label_cs2_no"><input type="radio" name="cs_q2" value="No"
+                                id="cs2_no" onclick="handleCSSRSRadio(this)"><span class="option-text">No</span></label>
+                    </div>
+                    <div id="alert_cs2" class="cssrs-alert-low hidden">
+                        <div class="cssrs-alert-header">⚠️ LOW RISK</div>
+                        <div class="cssrs-alert-label">Action Required:</div>
+                        <ul class="cssrs-alert-actions">
+                            <li>Contact counselor or SBBH for follow-up</li>
+                            <li>Offer MH services via HK PMHNP</li>
+                            <li>Follow up in 2 weeks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="cssrs_cond_1" class="hidden">
+                    <div class="question-block">
+                        <div class="question-text">3. In the past month, have you been thinking about how you might
+                            do
+                            this (kill yourself)?</div>
+                        <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                                id="label_cs3_yes"><input type="radio" name="cs_q3" value="Yes" id="cs3_yes"
+                                    onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                                class="option-label" id="label_cs3_no"><input type="radio" name="cs_q3" value="No"
+                                    id="cs3_no" onclick="handleCSSRSRadio(this)"><span
+                                    class="option-text">No</span></label>
+                        </div>
+                        <div id="alert_cs3" class="cssrs-alert-moderate hidden">
+                            <div class="cssrs-alert-header">⚠️ MODERATE RISK</div>
+                            <div class="cssrs-alert-label">Action Required:</div>
+                            <ul class="cssrs-alert-actions">
+                                <li>Contact counselor or SBBH for follow-up/management</li>
+                                <li>Follow up weekly</li>
+                                <li>Ensure HK consent & parent contact</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="question-block">
+                        <div class="question-text">4. In the past month, have you had these thoughts and had some
+                            intention of acting on them?</div>
+                        <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                                id="label_cs4_yes"><input type="radio" name="cs_q4" value="Yes" id="cs4_yes"
+                                    onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                                class="option-label" id="label_cs4_no"><input type="radio" name="cs_q4" value="No"
+                                    id="cs4_no" onclick="handleCSSRSRadio(this)"><span
+                                    class="option-text">No</span></label>
+                        </div>
+                        <div id="alert_cs4" class="cssrs-alert-high hidden">
+                            <div class="cssrs-alert-header">⚠️ HIGH RISK</div>
+                            <div class="cssrs-alert-label">Action Required:</div>
+                            <ul class="cssrs-alert-actions">
+                                <li>Contact admin and 911 immediately</li>
+                                <li>Immediate psychiatric evaluation in ER required</li>
+                                <li>Crisis intervention needed now</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="question-block">
+                        <div class="question-text">5. In the past month, have you started to work out the details of
+                            how
+                            to kill yourself? Did you intend to carry out this plan?</div>
+                        <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                                id="label_cs5_yes"><input type="radio" name="cs_q5" value="Yes" id="cs5_yes"
+                                    onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                                class="option-label" id="label_cs5_no"><input type="radio" name="cs_q5" value="No"
+                                    id="cs5_no" onclick="handleCSSRSRadio(this)"><span
+                                    class="option-text">No</span></label>
+                        </div>
+                        <div id="alert_cs5" class="cssrs-alert-high hidden">
+                            <div class="cssrs-alert-header">⚠️ HIGH RISK</div>
+                            <div class="cssrs-alert-label">Action Required:</div>
+                            <ul class="cssrs-alert-actions">
+                                <li>Contact admin and 911 immediately</li>
+                                <li>Immediate psychiatric evaluation in ER required</li>
+                                <li>Crisis intervention needed now</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-text">6. In your lifetime, have you ever done anything, started to do
+                        anything,
+                        or prepared to do anything to end your life?</div>
+                    <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                            id="label_cs6_yes"><input type="radio" name="cs_q6" value="Yes" id="cs6_yes"
+                                onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                            class="option-label" id="label_cs6_no"><input type="radio" name="cs_q6" value="No"
+                                id="cs6_no" onclick="handleCSSRSRadio(this)"><span class="option-text">No</span></label>
+                    </div>
+                    <div id="alert_cs6" class="cssrs-alert-moderate hidden">
+                        <div class="cssrs-alert-header">⚠️ MODERATE RISK</div>
+                        <div class="cssrs-alert-label">Action Required:</div>
+                        <ul class="cssrs-alert-actions">
+                            <li>Contact counselor or SBBH for follow-up/management</li>
+                            <li>Follow up weekly</li>
+                            <li>Ensure HK consent & parent contact</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="cssrs_cond_2" class="hidden">
+                    <div class="question-block">
+                        <div class="question-text">7. Was this within the past 3 months?</div>
+                        <div class="options-grid" style="grid-template-columns: 1fr 1fr;"><label class="option-label"
+                                id="label_cs7_yes"><input type="radio" name="cs_q7" value="Yes" id="cs7_yes"
+                                    onclick="handleCSSRSRadio(this)"><span class="option-text">Yes</span></label><label
+                                class="option-label" id="label_cs7_no"><input type="radio" name="cs_q7" value="No"
+                                    id="cs7_no" onclick="handleCSSRSRadio(this)"><span
+                                    class="option-text">No</span></label>
+                        </div>
+                        <div id="alert_cs7" class="cssrs-alert-high hidden">
+                            <div class="cssrs-alert-header">⚠️ HIGH RISK</div>
+                            <div class="cssrs-alert-label">Action Required:</div>
+                            <ul class="cssrs-alert-actions">
+                                <li>Contact admin and 911 immediately</li>
+                                <li>Immediate psychiatric evaluation in ER required</li>
+                                <li>Crisis intervention needed now</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-email-init" class="btn btn-email" onclick="requestEmail()">📧 Generate Email Report</button>
+
+            <div id="email-inline-warning" class="confirmation-expanded hidden">
+                <div class="confirmation-title">✓ HIPAA Compliance Acknowledgement</div>
+                <div class="confirmation-data">
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Notice</div>
+                        <div class="confirmation-value">Results contain Protected Health Information (PHI). Only send to
+                            authorized recipients.</div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn btn-cancel" onclick="cancelEmail()">Cancel</button>
+                    <button class="btn btn-email" onclick="confirmEmail()">I Acknowledge — Open Email</button>
+                </div>
+            </div>
+
+            <button id="btn-reset-init" class="btn btn-reset" onclick="requestReset()">Clear &amp; Start New
+                Student</button>
+
+            <div id="reset-inline-warning" class="confirmation-expanded hidden">
+                <div class="confirmation-title">✓ Confirm Clear Form</div>
+                <div class="confirmation-data">
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Action</div>
+                        <div class="confirmation-value">Clear All Data</div>
+                    </div>
+                    <div class="confirmation-field">
+                        <div class="confirmation-label">Warning</div>
+                        <div class="confirmation-value">All Data Will Be Cleared</div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn btn-cancel" onclick="cancelReset()">Cancel</button>
+                    <button class="btn btn-danger" onclick="confirmClear()">Yes, Clear It</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        var phqQuestions = ["1. Little interest or pleasure in doing things", "2. Feeling down, depressed, or hopeless", "3. Trouble falling asleep or staying asleep, or sleeping too much", "4. Feeling tired or having little energy", "5. Poor appetite or overeating", "6. Feeling bad about yourself - or that you are a failure or have let yourself or your family down", "7. Trouble concentrating on things like school, work, reading, or watching TV", "8. Moving or speaking so slowly that other people could have noticed. Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual", "9. Thoughts that you would be better off dead or of hurting yourself in any way"];
+        var gadQuestions = ["1. Feeling nervous, anxious, or on edge", "2. Not being able to stop or control worrying", "3. Worrying too much about different things", "4. Trouble relaxing", "5. Being so restless that it is hard to sit still", "6. Becoming easily annoyed or irritable", "7. Feeling afraid, as if something awful might happen"];
+        var standardOptions = [{ text: "Not at all", val: 0 }, { text: "Several days", val: 1 }, { text: "More than half the days", val: 2 }, { text: "Nearly every day", val: 3 }];
+        var screeningDate = "", studentInitials = "", scorePHQ = 0, scoreGAD = 0, scorePHQ2 = 0, scoreGAD2 = 0, severityPHQ = "", severityGAD = "", valImpact = "", valInterest = "", phq9_question9_val = 0, isSessionActive = false, isCSSRSOpened = false;
+
+        // DISCLAIMER TEXTS
+        var txtLow = "ACTION RECOMMENDATION: Contact counselor or SBBH for follow-up and management; offer MH services via HK PMHNP. Child is Low Risk: Follow up 2 weeks until symptoms improve with HK PMHNP and admin referral. Ensure the student has HK consent, school contact has been made, and parents have been contacted to offer evaluation by HK PMHNP.";
+        var txtMod = "ACTION RECOMMENDATION: Contact counselor or SBBH for follow-up and management; offer MH services via HK PMHNP. Child is Moderate Risk: Follow up weekly until symptoms improve with HK PMHNP and admin referral. Ensure the student has HK consent, school contact has been made, and parents have been contacted to offer evaluation by HK PMHNP.";
+        var txtHigh = "ACTION RECOMMENDATION: Contact admin and 911 for immediate psychiatric evaluation in ER. Child is High Risk: Immediate crisis intervention is needed (911 and admin).";
+
+        // --- CORE FUNCTIONS ---
+        function handleRadioClick(radio) {
+            var label = document.getElementById('label_' + radio.id);
+            var isAlreadySelected = label && label.classList.contains('selected');
+
+            // Reset all in group
+            document.getElementsByName(radio.name).forEach(r => {
+                var l = document.getElementById('label_' + r.id);
+                if (l) l.classList.remove('selected');
+            });
+
+            if (isAlreadySelected) {
+                // Deselect
+                radio.checked = false;
+            } else {
+                // Select
+                radio.checked = true;
+                if (label) label.classList.add('selected');
+            }
+        }
+
+        function handleCSSRSRadio(radio) {
+            handleRadioClick(radio);
+            var val = radio.checked ? radio.value : null;
+            var name = radio.name;
+
+            if (name === "cs_q2") { if (val === "Yes") document.getElementById('cssrs_cond_1').classList.remove('hidden'); else document.getElementById('cssrs_cond_1').classList.add('hidden'); }
+            if (name === "cs_q6") { if (val === "Yes") document.getElementById('cssrs_cond_2').classList.remove('hidden'); else document.getElementById('cssrs_cond_2').classList.add('hidden'); }
+
+            var qNum = name.replace("cs_q", "");
+            var alertDiv = document.getElementById('alert_cs' + qNum);
+            if (alertDiv) {
+                if (val === "Yes") alertDiv.classList.remove('hidden'); else alertDiv.classList.add('hidden');
+            }
+        }
+
+        // Toggle consolidated question reference dropdown
+        function toggleConsolidatedReference() {
+            var content = document.getElementById('reference-consolidated');
+            var button = document.querySelector('.consolidated-reference .toggle-reference');
+
+            if (!content || !button) return;
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                button.innerHTML = 'Hide PHQ-9/GAD-7 Question Details <span class="arrow">▲</span>';
+            } else {
+                content.classList.add('hidden');
+                button.innerHTML = 'Show PHQ-9/GAD-7 Question Details <span class="arrow">▼</span>';
+            }
+        }
+
+        // Toggle additional questions reference dropdown
+        function toggleAdditionalReference() {
+            var content = document.getElementById('reference-additional');
+            var buttons = document.querySelectorAll('.toggle-reference');
+            var button = buttons[1]; // Second toggle button
+
+            if (!content || !button) return;
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                button.innerHTML = 'Hide Additional Questions Details <span class="arrow">▲</span>';
+            } else {
+                content.classList.add('hidden');
+                button.innerHTML = 'Show Additional Questions Details <span class="arrow">▼</span>';
+            }
+        }
+
+        // Populate question reference content as table
+        function populateReference(type, questions, count) {
+            var container = document.getElementById('reference-' + type);
+            if (!container) return;
+
+            var questionName = type === 'phq' ? 'phq_' : 'gad_';
+
+            // Create table
+            var table = document.createElement('table');
+            table.className = 'reference-table';
+
+            // Create header
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th class="col-num">Q#</th><th class="col-question">Question</th><th class="col-score">Score</th>';
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create body
+            var tbody = document.createElement('tbody');
+
+            for (var i = 0; i < count; i++) {
+                var val = null;
+                document.getElementsByName(questionName + i).forEach(r => {
+                    if (r.checked) val = parseInt(r.value);
+                });
+
+                var row = document.createElement('tr');
+
+                var cellNum = document.createElement('td');
+                cellNum.className = 'col-num';
+                cellNum.innerText = 'Q' + (i + 1);
+
+                var cellQuestion = document.createElement('td');
+                cellQuestion.className = 'col-question';
+                cellQuestion.innerText = questions[i].replace(/^\d+\.\s*/, '');
+
+                var cellScore = document.createElement('td');
+                cellScore.className = 'col-score';
+                cellScore.innerText = val !== null ? val + ' (' + standardOptions[val].text + ')' : 'No answer';
+
+                row.appendChild(cellNum);
+                row.appendChild(cellQuestion);
+                row.appendChild(cellScore);
+                tbody.appendChild(row);
+            }
+
+            table.appendChild(tbody);
+            container.innerHTML = ''; // Clear existing content to prevent duplicates
+            container.appendChild(table);
+        }
+
+        // Populate additional questions reference content as table
+        function populateAdditionalReference() {
+            var container = document.getElementById('reference-impact-interest');
+            if (!container) return;
+
+            var table = document.createElement('table');
+            table.className = 'reference-table';
+
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th class="col-num">Q#</th><th class="col-question">Question</th><th class="col-score">Answer</th>';
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement('tbody');
+
+            // Impact question
+            var diffLabel = "";
+            var impactSelected = document.querySelector('input[name="impact"]:checked');
+            if (impactSelected) {
+                diffLabel = impactSelected.value;
+            } else {
+                diffLabel = "No answer";
+            }
+
+            var impactRow = document.createElement('tr');
+            var impactNum = document.createElement('td');
+            impactNum.className = 'col-num';
+            impactNum.innerText = 'Q1';
+            var impactQuestion = document.createElement('td');
+            impactQuestion.className = 'col-question';
+            impactQuestion.innerText = 'If you checked off any problems above, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?';
+            var impactAnswer = document.createElement('td');
+            impactAnswer.className = 'col-score';
+            impactAnswer.innerText = diffLabel;
+            impactRow.appendChild(impactNum);
+            impactRow.appendChild(impactQuestion);
+            impactRow.appendChild(impactAnswer);
+            tbody.appendChild(impactRow);
+
+            // Interest question
+            var interestLabel = "";
+            var interestSelected = document.querySelector('input[name="interest"]:checked');
+            if (interestSelected) {
+                interestLabel = interestSelected.value;
+            } else {
+                interestLabel = "No answer";
+            }
+
+            var interestRow = document.createElement('tr');
+            var interestNum = document.createElement('td');
+            interestNum.className = 'col-num';
+            interestNum.innerText = 'Q2';
+            var interestQuestion = document.createElement('td');
+            interestQuestion.className = 'col-question';
+            interestQuestion.innerText = 'Are you interested in speaking with a mental health provider?';
+            var interestAnswer = document.createElement('td');
+            interestAnswer.className = 'col-score';
+            interestAnswer.innerText = interestLabel;
+            interestRow.appendChild(interestNum);
+            interestRow.appendChild(interestQuestion);
+            interestRow.appendChild(interestAnswer);
+            tbody.appendChild(interestRow);
+
+            table.appendChild(tbody);
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        // Modified Function to render subsets of questions
+        function renderSubset(arr, id, pre, start, end) {
+            var cont = document.getElementById(id); if (!cont) return;
+            var html = cont.innerHTML; // Append to existing content (allows multiple sets in one container)
+
+            for (var i = start; i <= end; i++) {
+                var q = arr[i];
+
+                // LOGIC CHANGE: Remove numbering (e.g. "1. ") for display purposes
+                var displayText = q.replace(/^\d+\.\s*/, '');
+
+                // Use standard ID formatting so calculation logic finds them
+                var questionName = pre + '_' + i;
+
+                html += '<div class="question-block"><div class="question-text">' + displayText + '</div><div class="options-grid">';
+                standardOptions.forEach(opt => {
+                    var rid = questionName + '_opt' + opt.val;
+                    html += '<label class="option-label" id="label_' + rid + '"><input type="radio" name="' + questionName + '" value="' + opt.val + '" id="' + rid + '" onclick="handleRadioClick(this)"><span class="option-text">' + opt.text + '</span></label>';
+                });
+                html += '</div></div>';
+            }
+            cont.innerHTML = html;
+        }
+
+        // --- NEW: START GATE LOGIC ---
+        function requestStart() {
+            var d = document.getElementById('manualDate'), init = document.getElementById('studentInitials'), err = document.getElementById('start-error');
+
+            // Validation
+            if (d.value === "" || init.value.trim() === "") {
+                err.innerText = "Please fill in ALL fields.";
+                err.classList.remove('hidden');
+                return;
+            }
+            err.classList.add('hidden');
+
+            // Populate Confirmation Display
+            document.getElementById('confirm-date-display').innerText = "Date: " + d.value;
+            document.getElementById('confirm-name-display').innerText = "Student: " + init.value;
+
+            // Toggle UI
+            document.getElementById('btn-start-init').classList.add('hidden');
+            document.getElementById('start-inline-warning').classList.remove('hidden');
+        }
+
+        function cancelStart() {
+            document.getElementById('start-inline-warning').classList.add('hidden');
+            document.getElementById('btn-start-init').classList.remove('hidden');
+        }
+
+        function confirmStart() {
+            var d = document.getElementById('manualDate'), init = document.getElementById('studentInitials');
+            screeningDate = d.value;
+            studentInitials = init.value;
+            isSessionActive = true;
+
+            document.getElementById('start-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            scrollToTop();
+        }
+
+        function calculateAndShow() {
+            scorePHQ = 0; scoreGAD = 0; phq9_question9_val = 0; scorePHQ2 = 0; scoreGAD2 = 0;
+
+            // PHQ Scoring Loop (0-8)
+            for (var i = 0; i < 9; i++) {
+                document.getElementsByName('phq_' + i).forEach(r => {
+                    if (r.checked) {
+                        var v = parseInt(r.value);
+                        scorePHQ += v;
+                        if (i === 8) phq9_question9_val = v;
+                        if (i === 0 || i === 1) scorePHQ2 += v; // PHQ2 Calculation
+                    }
+                });
+            }
+
+            // GAD Scoring Loop (0-6)
+            for (var i = 0; i < 7; i++) {
+                document.getElementsByName('gad_' + i).forEach(r => {
+                    if (r.checked) {
+                        var v = parseInt(r.value);
+                        scoreGAD += v;
+                        if (i === 0 || i === 1) scoreGAD2 += v; // GAD2 Calculation
+                    }
+                });
+            }
+
+            var imp = document.querySelector('input[name="impact"]:checked'), int = document.querySelector('input[name="interest"]:checked');
+            valImpact = imp ? imp.value : "No Answer"; valInterest = int ? int.value : "No Answer";
+
+            if (scorePHQ <= 4) severityPHQ = "Minimal depression (0-4)"; else if (scorePHQ <= 9) severityPHQ = "Mild depression (5-9)"; else if (scorePHQ <= 14) severityPHQ = "Moderate depression (10-14)"; else if (scorePHQ <= 19) severityPHQ = "Moderately severe depression (15-19)"; else severityPHQ = "Severe depression (20-27)";
+            if (scoreGAD <= 4) severityGAD = "Minimal anxiety (0-4)"; else if (scoreGAD <= 9) severityGAD = "Mild anxiety (5-9)"; else if (scoreGAD <= 14) severityGAD = "Moderate anxiety (10-14)"; else severityGAD = "Severe anxiety (15-21)";
+
+            // Display Scores with Dynamic Colors
+            var dPHQ = document.getElementById('displayScorePHQ');
+            dPHQ.innerText = scorePHQ;
+            dPHQ.className = "score-large"; // Reset
+            if (scorePHQ <= 4) dPHQ.classList.add('score-green'); else if (scorePHQ <= 14) dPHQ.classList.add('score-orange'); else dPHQ.classList.add('score-red');
+
+            document.getElementById('displaySeverityPHQ').innerText = severityPHQ;
+            document.getElementById('displayScorePHQ2').innerText = scorePHQ2; // PHQ2 Display
+
+            var dGAD = document.getElementById('displayScoreGAD');
+            dGAD.innerText = scoreGAD;
+            dGAD.className = "score-large"; // Reset
+            if (scoreGAD <= 4) dGAD.classList.add('score-green'); else if (scoreGAD <= 14) dGAD.classList.add('score-orange'); else dGAD.classList.add('score-red');
+
+            document.getElementById('displaySeverityGAD').innerText = severityGAD;
+            document.getElementById('displayScoreGAD2').innerText = scoreGAD2; // GAD2 Display
+
+            // HEATMAP RENDERING
+            var heatmapPHQ = document.getElementById('heatmap-phq');
+            var heatmapGAD = document.getElementById('heatmap-gad');
+            heatmapPHQ.innerHTML = ''; // Clear
+            heatmapGAD.innerHTML = ''; // Clear
+
+            // PHQ-9 Heatmap (9 questions)
+            for (var i = 0; i < 9; i++) {
+                var val = null;
+                document.getElementsByName('phq_' + i).forEach(r => { if (r.checked) val = parseInt(r.value); });
+                var cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                if (val === null) cell.classList.add('unanswered');
+                // Add safety alert styling for PHQ-9 Q9 (suicide ideation) when positive
+                if (i === 8 && val !== null && val > 0) cell.classList.add('safety-alert');
+
+                var label = document.createElement('div');
+                label.className = 'cell-label';
+                label.innerText = 'Q' + (i + 1);
+
+                var value = document.createElement('div');
+                value.className = 'cell-value';
+                value.innerText = val !== null ? val : '-';
+
+                cell.appendChild(label);
+                cell.appendChild(value);
+                heatmapPHQ.appendChild(cell);
+            }
+
+            // GAD-7 Heatmap (7 questions)
+            for (var i = 0; i < 7; i++) {
+                var val = null;
+                document.getElementsByName('gad_' + i).forEach(r => { if (r.checked) val = parseInt(r.value); });
+                var cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                if (val === null) cell.classList.add('unanswered');
+
+                var label = document.createElement('div');
+                label.className = 'cell-label';
+                label.innerText = 'Q' + (i + 1);
+
+                var value = document.createElement('div');
+                value.className = 'cell-value';
+                value.innerText = val !== null ? val : '-';
+
+                cell.appendChild(label);
+                cell.appendChild(value);
+                heatmapGAD.appendChild(cell);
+            }
+
+            // POPULATE QUESTION REFERENCES
+            populateReference('phq', phqQuestions, 9);
+            populateReference('gad', gadQuestions, 7);
+            populateAdditionalReference();
+
+            // 5. UPDATE "REQUIRES PROMPT REVIEW" SECTION (UI)
+            var reviewItemsUI = [];
+            // Check for clinical flags requiring prompt review
+            if (phq9_question9_val > 0) {
+                reviewItemsUI.push("PHQ-9 Q9 Positive (Score: " + phq9_question9_val + ") → Administer C-SSRS Immediately");
+            }
+            if (valInterest === "Yes") reviewItemsUI.push("Student interested in speaking with a mental health provider");
+
+            var prSection = document.getElementById('prompt-review-section');
+            var prBody = document.getElementById('prompt-review-body');
+            if (reviewItemsUI.length > 0) {
+                prSection.classList.remove('hidden');
+                // Populate with checkmark divs
+                prBody.innerHTML = '';
+                reviewItemsUI.forEach(function (item) {
+                    var itemDiv = document.createElement('div');
+                    itemDiv.innerHTML = '\u2713 ' + item;
+                    prBody.appendChild(itemDiv);
+                });
+            } else {
+                prSection.classList.add('hidden');
+            }
+
+
+
+            // C-SSRS button always reset to visible; do NOT reset isCSSRSOpened here
+            document.getElementById('cssrs-module').classList.add('hidden');
+            var csBtn = document.getElementById('btn-admin-cssrs');
+            csBtn.classList.remove('hidden');
+            // Highlight C-SSRS button urgently if PHQ-9 Q9 positive
+            if (phq9_question9_val > 0) {
+                csBtn.classList.add('cssrs-urgent');
+            } else {
+                csBtn.classList.remove('cssrs-urgent');
+            }
+
+            // Populate session info header on results page
+            document.getElementById('results-session-info').innerText =
+                'Student: ' + studentInitials + '  •  Date: ' + screeningDate;
+
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            // Scroll to top of container (embed-safe)
+            scrollToTop();
+            document.getElementById('results-top').focus();
+        }
+
+        // --- HANDOFF FLOW ---
+
+        // Embed-safe scroll to top (works inside Google Sites iframes)
+        function scrollToTop() {
+            var container = document.querySelector('.container');
+            if (container) { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        }
+
+        // Done Gate — prevents accidental submission
+        function requestDone() {
+            document.getElementById('btn-student-done').classList.add('hidden');
+            document.getElementById('done-inline-warning').classList.remove('hidden');
+        }
+        function cancelDone() {
+            document.getElementById('done-inline-warning').classList.add('hidden');
+            document.getElementById('btn-student-done').classList.remove('hidden');
+        }
+        function confirmDone() {
+            document.getElementById('done-inline-warning').classList.add('hidden');
+            studentDone();
+        }
+
+        // Student taps "I'm Done" at the end of the questionnaire
+        function studentDone() {
+            if (!isSessionActive) return; // Guard: no active session
+            scrollToTop(); // Scroll page to top under the overlay so all subsequent screens start at top
+            document.getElementById('handoff-student-overlay').classList.remove('hidden');
+        }
+
+        // The nurse picks up the tablet and taps the student overlay button
+        function nurseTakeover() {
+            // Check for unanswered questions and populate warning if found
+            var missing = getMissingData();
+            var warningBox = document.getElementById('handoff-warning-box');
+            var warningList = document.getElementById('handoff-warning-list');
+            warningList.innerHTML = '';
+            if (missing.length > 0) {
+                missing.forEach(function (q) {
+                    var li = document.createElement('li');
+                    li.textContent = q;
+                    warningList.appendChild(li);
+                });
+                warningBox.classList.remove('hidden');
+            } else {
+                warningBox.classList.add('hidden');
+            }
+            // Transition overlays
+            document.getElementById('handoff-student-overlay').classList.add('hidden');
+            document.getElementById('handoff-nurse-overlay').classList.remove('hidden');
+        }
+
+        // Nurse taps "View Screening Results" — fade overlay out then reveal results
+        function nurseConfirmReveal() {
+            var nurseOverlay = document.getElementById('handoff-nurse-overlay');
+            // Hide quiz immediately so it doesn't bleed through the fading overlay
+            document.getElementById('quiz-section').classList.add('hidden');
+            nurseOverlay.classList.add('fading');
+            setTimeout(function () {
+                nurseOverlay.classList.add('hidden');
+                nurseOverlay.classList.remove('fading');
+                calculateAndShow();
+            }, 360);
+        }
+
+        // 3. C-SSRS Gate
+        function requestCSSRS() {
+            document.getElementById('btn-admin-cssrs').classList.add('hidden');
+            document.getElementById('cssrs-inline-warning').classList.remove('hidden');
+        }
+        function cancelCSSRS() {
+            document.getElementById('cssrs-inline-warning').classList.add('hidden');
+            document.getElementById('btn-admin-cssrs').classList.remove('hidden');
+        }
+        function confirmOpenCSSRS() {
+            document.getElementById('cssrs-inline-warning').classList.add('hidden');
+            document.getElementById('cssrs-module').classList.remove('hidden');
+            isCSSRSOpened = true;
+        }
+
+        // 4. Email Gate
+        function requestEmail() {
+            document.getElementById('btn-email-init').classList.add('hidden');
+            document.getElementById('email-inline-warning').classList.remove('hidden');
+        }
+        function cancelEmail() {
+            document.getElementById('email-inline-warning').classList.add('hidden');
+            document.getElementById('btn-email-init').classList.remove('hidden');
+        }
+        function confirmEmail() {
+            document.getElementById('email-inline-warning').classList.add('hidden');
+            document.getElementById('btn-email-init').classList.remove('hidden');
+            emailResults();
+        }
+
+        // 5. Reset Gate
+        function requestReset() {
+            document.getElementById('btn-reset-init').classList.add('hidden');
+            document.getElementById('reset-inline-warning').classList.remove('hidden');
+        }
+        function cancelReset() {
+            document.getElementById('reset-inline-warning').classList.add('hidden');
+            document.getElementById('btn-reset-init').classList.remove('hidden');
+        }
+        function confirmClear() {
+            document.getElementById('reset-inline-warning').classList.add('hidden');
+            performReset();
+        }
+
+        function performReset() {
+            // RAM PURGE: Reset all variables
+            isSessionActive = false; screeningDate = ""; studentInitials = ""; scorePHQ = 0; scoreGAD = 0; scorePHQ2 = 0; scoreGAD2 = 0; severityPHQ = ""; severityGAD = ""; valImpact = ""; valInterest = ""; phq9_question9_val = 0; isCSSRSOpened = false;
+
+            // UI RESET
+            document.getElementById('manualDate').value = getTodayString();
+            document.getElementById('studentInitials').value = "";
+            document.getElementById('start-error').classList.add('hidden');
+
+            document.querySelectorAll('input').forEach(i => i.checked = false);
+            document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+
+            // Hide all 7 C-SSRS risk alerts explicitly
+            document.getElementById('alert_cs1').classList.add('hidden');
+            document.getElementById('alert_cs2').classList.add('hidden');
+            document.getElementById('alert_cs3').classList.add('hidden');
+            document.getElementById('alert_cs4').classList.add('hidden');
+            document.getElementById('alert_cs5').classList.add('hidden');
+            document.getElementById('alert_cs6').classList.add('hidden');
+            document.getElementById('alert_cs7').classList.add('hidden');
+
+
+            document.getElementById('cssrs-module').classList.add('hidden');
+            document.getElementById('cssrs_cond_1').classList.add('hidden');
+            document.getElementById('cssrs_cond_2').classList.add('hidden');
+
+            // RESET ALL GATES
+            document.getElementById('btn-start-init').classList.remove('hidden');
+            document.getElementById('start-inline-warning').classList.add('hidden');
+            document.getElementById('btn-admin-cssrs').classList.remove('hidden');
+            document.getElementById('cssrs-inline-warning').classList.add('hidden');
+            document.getElementById('btn-reset-init').classList.remove('hidden');
+            document.getElementById('reset-inline-warning').classList.add('hidden');
+
+            // Clear dropdown reference content to prevent duplicates on next run
+            document.getElementById('reference-phq').innerHTML = '';
+            document.getElementById('reference-gad').innerHTML = '';
+            document.getElementById('reference-impact-interest').innerHTML = '';
+
+            // Close both dropdowns and reset button text
+            document.getElementById('reference-consolidated').classList.add('hidden');
+            document.getElementById('reference-additional').classList.add('hidden');
+            var toggleButtons = document.querySelectorAll('.toggle-reference');
+            if (toggleButtons[0]) {
+                toggleButtons[0].innerHTML = 'Show PHQ-9/GAD-7 Question Details <span class="arrow">▼</span>';
+            }
+            if (toggleButtons[1]) {
+                toggleButtons[1].innerHTML = 'Show Additional Questions Details <span class="arrow">▼</span>';
+            }
+
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('start-section').classList.remove('hidden');
+
+            // Hide both handoff overlays and reset warning
+            document.getElementById('handoff-student-overlay').classList.add('hidden');
+            document.getElementById('handoff-nurse-overlay').classList.add('hidden');
+            document.getElementById('handoff-nurse-overlay').classList.remove('fading');
+            document.getElementById('handoff-warning-box').classList.add('hidden');
+            document.getElementById('handoff-warning-list').innerHTML = '';
+
+            // Reset email gate
+            document.getElementById('btn-email-init').classList.remove('hidden');
+            document.getElementById('email-inline-warning').classList.add('hidden');
+
+            // Reset done gate
+            document.getElementById('btn-student-done').classList.remove('hidden');
+            document.getElementById('done-inline-warning').classList.add('hidden');
+
+            // Clear C-SSRS urgent state and session info
+            document.getElementById('btn-admin-cssrs').classList.remove('cssrs-urgent');
+            document.getElementById('results-session-info').innerText = '';
+
+            scrollToTop();
+        }
+
+        function getMissingData() {
+            var missing = [];
+            for (var i = 0; i < 9; i++) { if (getRadioVal("phq_" + i) === "No Answer") missing.push("PHQ-" + (i + 1)); }
+            for (var i = 0; i < 7; i++) { if (getRadioVal("gad_" + i) === "No Answer") missing.push("GAD-" + (i + 1)); }
+            if (getRadioVal("impact") === "No Answer") missing.push("Difficulty");
+            if (getRadioVal("interest") === "No Answer") missing.push("Interest");
+
+            if (isCSSRSOpened) {
+                var c1 = getRadioVal("cs_q1"), c2 = getRadioVal("cs_q2");
+                if (c1 === "No Answer") missing.push("C-SSRS Q1");
+                if (c2 === "No Answer") missing.push("C-SSRS Q2");
+                if (c2 === "Yes") {
+                    if (getRadioVal("cs_q3") === "No Answer") missing.push("C-SSRS Q3");
+                    if (getRadioVal("cs_q4") === "No Answer") missing.push("C-SSRS Q4");
+                    if (getRadioVal("cs_q5") === "No Answer") missing.push("C-SSRS Q5");
+                }
+                var c6 = getRadioVal("cs_q6");
+                if (c6 === "No Answer") missing.push("C-SSRS Q6");
+                if (c6 === "Yes") {
+                    if (getRadioVal("cs_q7") === "No Answer") missing.push("C-SSRS Q7");
+                }
+            }
+            return missing;
+        }
+
+        function getTodayString() { var t = new Date(); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }
+        function getRadioVal(n) { var el = document.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : "No Answer"; }
+
+        window.addEventListener("beforeunload", function (e) { if (isSessionActive) { e.preventDefault(); e.returnValue = ""; } });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('manualDate').value = getTodayString();
+
+            // Clear containers first to be safe
+            document.getElementById('phq4-container').innerHTML = "";
+
+            // RENDER PART 1: PHQ-4 (GAD 1&2, PHQ 1&2)
+            renderSubset(gadQuestions, 'phq4-container', 'gad', 0, 1);
+            renderSubset(phqQuestions, 'phq4-container', 'phq', 0, 1);
+
+            // RENDER PART 2: GAD-7 REMAINING
+            renderSubset(gadQuestions, 'gad-remaining-container', 'gad', 2, 6);
+
+            // RENDER PART 3: PHQ-9 REMAINING
+            renderSubset(phqQuestions, 'phq-remaining-container', 'phq', 2, 8);
+
+            // --- SECURITY: UI LOCKDOWN ---
+            // Prevent Right-Click and Copy Shortcuts in Results Area
+            document.addEventListener('contextmenu', event => {
+                if (document.getElementById('result-section').contains(event.target)) {
+                    event.preventDefault();
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                // Block Ctrl+C, Ctrl+S, Ctrl+P
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 's' || e.key === 'p')) {
+                    if (!document.getElementById('result-section').classList.contains('hidden')) {
+                        e.preventDefault();
+                        alert("This action is disabled to protect patient privacy. Please use the 'Email Results' button.");
+                    }
+                }
+            });
+        });
+
+
+        // --- EMAIL LOGIC (REPLACES DOWNLOAD) ---
+        function emailResults() {
+            // Use global studentInitials variable set during confirmStart()
+
+            // 1. HEADER — Student Initials & Date
+            var body = `*** CONFIDENTIAL - NURSE USE ONLY ***\n`;
+            body += `Student: ${studentInitials}\nDate: ${screeningDate}\n\n`;
+
+            // 2. GAD-2 SCORE
+            body += `*** GAD-2 SCORE ***\n`;
+            body += `GAD-2: ${scoreGAD2}\n\n`;
+
+            // 3. PHQ-2 SCORE
+            body += `*** PHQ-2 SCORE ***\n`;
+            body += `PHQ-2: ${scorePHQ2}\n\n`;
+
+            // 4. GAD-7 SCORE & DATA
+            body += `*** GAD-7: ${scoreGAD} [${severityGAD}] ***\n`;
+            gadQuestions.forEach((q, i) => {
+                var s = document.querySelector('input[name="gad_' + i + '"]:checked');
+                var v = s ? s.value : "-";
+                var t = s ? standardOptions[parseInt(s.value)].text : "No Answer";
+                body += `${i + 1}: ${t} (${v})\n`;
+            });
+            body += `\n`;
+
+            // 5. PHQ-9 SCORE & DATA
+            body += `*** PHQ-9: ${scorePHQ} [${severityPHQ}] ***\n`;
+            if (phq9_question9_val > 0) body += `SAFETY ALERT: PHQ-9 Q9 Positive\n`;
+            phqQuestions.forEach((q, i) => {
+                var s = document.querySelector('input[name="phq_' + i + '"]:checked');
+                var v = s ? s.value : "-";
+                var t = s ? standardOptions[parseInt(s.value)].text : "No Answer";
+                body += `${i + 1}: ${t} (${v})\n`;
+            });
+            body += `\n`;
+
+            // 6. ADDITIONAL QUESTIONS — Difficulty & Speak with MH Provider
+            body += `*** ADDITIONAL QUESTIONS ***\n`;
+            body += `Difficulty: ${valImpact}\n`;
+            body += `Interest in Speaking with MH Provider: ${valInterest}\n\n`;
+
+            // 7. MISSING DATA
+            var missing = getMissingData();
+            if (missing.length > 0) {
+                body += `*** MISSING DATA ***\n${missing.join(", ")}\n\n`;
+            }
+
+            // 8. C-SSRS (If Applicable)
+            if (isCSSRSOpened) {
+                body += `*** C-SSRS RISK ***\n`;
+                body += `1: ${getRadioVal("cs_q1")}\n`;
+                body += `2: ${getRadioVal("cs_q2")}\n`;
+                if (getRadioVal("cs_q2") === "Yes") {
+                    body += `3: ${getRadioVal("cs_q3")}\n`;
+                    body += `4: ${getRadioVal("cs_q4")}\n`;
+                    body += `5: ${getRadioVal("cs_q5")}\n`;
+                }
+                body += `6: ${getRadioVal("cs_q6")}\n`;
+                if (getRadioVal("cs_q6") === "Yes") {
+                    body += `7: ${getRadioVal("cs_q7")}\n`;
+                }
+            }
+
+            // ENCODE & LAUNCH
+            // Use a hidden <a target="_top"> instead of window.location.href so that
+            // the mailto: escapes the Google Sites iframe sandbox on iOS Safari.
+            // window.location.href from inside an iframe is silently blocked by iOS;
+            // target="_top" navigates the top-level window, which iOS permits.
+            var subject = `E Secure Screener Results - ${studentInitials} - ${screeningDate}`;
+            var mailtoURI = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            var a = document.createElement('a');
+            a.href = mailtoURI;
+            a.target = '_top';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+
+
+    </script>
+</body>
+
+</html>
