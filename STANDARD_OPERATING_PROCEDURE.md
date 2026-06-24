@@ -29,42 +29,18 @@
     *   **C-SSRS Protocol:** Click the **yellow C-SSRS button** to unlock the suicide risk assessment.
     *   *Procedure:* Read C-SSRS questions verbally to the student and record answers. Logic will guide you through Sub-questions 3-5 (if Q2 is Yes) and Q7 (if Q6 is Yes).
 
-### 4. The Data Handling Protocol (Strict Compliance)
-Once the assessment is complete, you must follow this exact 7-step manual workflow to ensure data privacy.
+### 4. The Data Transmission Protocol (Strict Compliance)
+Once the assessment is complete and scores are reviewed, you must follow this 3-step workflow to securely transmit the results. Because the application runs entirely in local browser memory, **no files are ever saved to the iPad disk**, eliminating the risk of data spills.
 
-#### Step 1: Initial Download
-Click **'Download Combined .txt Results'** in the screener interface. A system prompt or simple confirming action may occur depending on the browser state.
+#### Step 1: Generate Email Report
+1. Click **'Email Results'** (or **'Generate Email Report'**) in the staff review section of the screener interface.
+2. The browser will launch the native iOS Mail application and pre-populate the subject line and email body with the confidential session scores (PHQ-9/GAD-7/C-SSRS data).
 
-#### Step 2: Manual Handshake (The Preview Step)
-1.  Locate the **Safari Download Manager** (small blue arrow icon in the address bar).
-2.  Tap the file name in the list to open the **Text Preview** window.
-3.  Tap the **Upload/Share icon** (square with an upward arrow).
-4.  Select **'Save to Files'**.
+#### Step 2: Secure Recipient Entry
+1. Manually type the secure email address of the Remote APRN or charting nurse in the **To** field (this field is intentionally left blank in the application code to prevent hardcoded credential leaks).
+2. Tap **Send** to securely transmit the scores directly to the clinical charting inbox.
 
-#### Step 3: Target Directory
-1.  In the file selection window, navigate strictly to **'On My iPad'**.
-2.  Select the **'Downloads'** folder.
-3.  Tap **Save**.
-
-#### Step 4: E-Secure Transmission
-1.  Exit Safari and open the **Files** app.
-2.  Locate the file in the **'Downloads'** folder.
-3.  Long-press the file and select **Share** (or open it and share) to **Mail**.
-4.  Email it to the Remote APRN.
-5.  **Critical:** Ensure the subject line includes **'E-Secure'** or **'CONFIDENTIAL'**.
-
-#### Step 5: Primary Deletion
-1.  Return to the **'Downloads'** folder in the **Files** app.
-2.  Long-press the file you just sent.
-3.  Select **'Delete'**.
-
-#### Step 6: Permanent Sanitization (The 'Trash' Step)
-1.  In the **Files** sidebar, tap **'Recently Deleted'**.
-2.  Long-press the file (or tap Select).
-3.  Select **'Delete Now'**.
-    *   **WARNING:** Clearing the Safari Download list (blue icon) **DOES NOT DELETE** the file. Failue to empty the 'Recently Deleted' folder constitutes a **HIPAA Data Spill**.
-
-#### Step 7: RAM Purge
-1.  Return to the Safari browser tab.
-2.  Click **'Clear & Start New Student'**.
-3.  Confirm the action to flush the device's volatile memory for the next session.
+#### Step 3: RAM Purge (Volatile Memory Sanitization)
+1. Close the iOS Mail client and return to the Safari browser tab.
+2. Click **'Clear & Start New Student'** at the bottom of the interface.
+3. Confirm the action in the system prompt. This completely flushes all student answers from the browser's volatile memory, securing the device for the next screening session.
