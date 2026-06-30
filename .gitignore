@@ -1,0 +1,23 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (just in case future tools are added)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Mac specific
+.AppleDouble
+.LSOverride
