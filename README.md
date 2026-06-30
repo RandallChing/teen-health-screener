@@ -1,4 +1,4 @@
-# Teen Health Screener — Middle School Edition
+# Teen Health Screener (Mental Health Focus)
 
 A clinical-grade, offline-first web application for administering standardized mental health screenings (PHQ-2/PHQ-9, GAD-2/GAD-7, and C-SSRS suicide risk workflows) in public school health rooms.
 
